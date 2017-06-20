@@ -14,10 +14,9 @@ import CoreLocation
 
 //let instructionsString = "L5, R1, R4, L5, L4, R3, R1, L1, R4, R5, L1, L3, R4, L2, L4, R2, L4, L1, R3, R1, R1, L1, R1, L5, R5, R2, L5, R2, R1, L2, L4, L4, R191, R2, R5, R1, L1, L2, R5, L2, L3, R4, L1, L1, R1, R50, L1, R1, R76, R5, R4, R2, L5, L3, L5, R2, R1, L1, R2, L3, R4, R2, L1, L1, R4, L1, L1, R185, R1, L5, L4, L5, L3, R2, R3, R1, L5, R1, L3, L2, L2, R5, L1, L1, L3, R1, R4, L2, L1, L1, L3, L4, R5, L2, R3, R5, R1, L4, R5, L3, R3, R3, R1, R1, R5, R2, L2, R5, L5, L4, R4, R3, R5, R1, L3, R1, L2, L2, R3, R4, L1, R4, L1, R4, R3, L1, L4, L1, L5, L2, R2, L1, R1, L5, L3, R4, L1, R5, L5, L5, L1, L3, R1, R5, L2, L4, L5, L1, L1, L2, R5, R5, L4, R3, L2, L1, L3, L4, L5, L5, L2, R4, R3, L5, R4, R2, R1, L5"
 
-let instructionsString = "R8, R4, R4, R8"
+var instructionsString = "R8, R4, R4, R8"
 
-
-let instructionsArray = instructionsString.componentsSeparatedByString(", ")
+let instructionsArray = instructionsString.components(separatedBy: ", ")
 
 enum CompassDirection:CLLocationDirection {
     case north = 0, east = 90, south = 180, west = 270
@@ -44,12 +43,19 @@ public func ==(lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool
 }
 
 for instruction in instructionsArray {
-    if instruction.characters.count < 2 { continue }
-    let index = instruction.startIndex.advancedBy(1)
-    let wayToTurn = instruction.substringToIndex(index)
-    let distanceString = instruction.substringFromIndex(index)
-    guard let distance = Double(distanceString)
-        else { continue }
+    if instruction.characters.count < 2 {
+        print("skipping")
+        continue
+    }
+    
+    let index:String.Index = instruction.index(instruction.startIndex, offsetBy: 1)
+    print(index)
+    let wayToTurn = instruction.substring(to: index)
+    let distanceString = instruction.substring(from: index)
+    guard let distance = Double(distanceString) else {
+        print("skipping")
+        continue
+    }
     
     switch myLocation.currentCourse {
     case .north:
@@ -101,7 +107,9 @@ for instruction in instructionsArray {
 }
 
 allLocations
+
 allCourse
+
 locationsUpToDuplicate
 
 firstRevisitedLocation.latitude
@@ -109,9 +117,9 @@ firstRevisitedLocation.longitude
 
 print("End point coordinates: lat=\(myLocation.currentCoordinate.latitude), long=\(myLocation.currentCoordinate.longitude)")
 
+let firstDistance = abs(0.0 - firstRevisitedLocation.longitude) + abs(0.0 - firstRevisitedLocation.latitude)
+
 // Dt (A, B) = Taxicab Distance =  (|x1 - x2|  + |y1 – y2|
 let taxiCabDistance = abs(0.0 - myLocation.currentCoordinate.longitude) + abs(0.0 - myLocation.currentCoordinate.latitude)
-
-let firstDistance = abs(0.0 - firstRevisitedLocation.longitude) + abs(0.0 - firstRevisitedLocation.latitude)
 
 print("The taxicab distance back to the start is \(taxiCabDistance)")
